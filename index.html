@@ -11,8 +11,14 @@
           extend: {
             animation: {
               'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
-              'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'pop': 'pop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
               'spin-slow': 'spin 3s linear infinite',
+              'pulse-fast': 'pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'zoom-in': 'zoomIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'slide-up': 'slideUp 0.5s ease-out forwards',
+              'bounce-in': 'bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
+              'fade-in': 'fadeIn 0.3s ease-out forwards',
             },
             keyframes: {
               shake: {
@@ -24,6 +30,29 @@
               pop: {
                 '0%': { transform: 'scale(0.5)', opacity: '0' },
                 '100%': { transform: 'scale(1)', opacity: '1' }
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-15px)' }
+              },
+              zoomIn: {
+                '0%': { transform: 'scale(0)', opacity: '0' },
+                '80%': { transform: 'scale(1.1)' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(30px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' }
+              },
+              bounceIn: {
+                '0%': { transform: 'scale(0.3)', opacity: '0' },
+                '50%': { transform: 'scale(1.05)' },
+                '70%': { transform: 'scale(0.9)' },
+                '100%': { transform: 'scale(1)', opacity: '1' }
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' }
               }
             }
           }
@@ -37,18 +66,47 @@
         background-color: #1a1a1a;
         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         touch-action: none; /* Prevent pull-to-refresh on mobile */
+        user-select: none;
+        -webkit-user-select: none;
       }
-      /* 3D Styles */
-      .scene {
-        perspective: 600px;
+      
+      /* --- 3D Engine Styles --- */
+      .perspective-800 {
+        perspective: 800px;
       }
-      .cube {
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+      .preserve-3d {
+        transform-style: preserve-3d;
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      
+      /* Simon Game 3D Pad */
+      .simon-pad {
+        transition: transform 0.1s, filter 0.1s;
+        transform-style: preserve-3d;
+      }
+      .simon-pad:active {
+        transform: translateZ(-10px);
+      }
+      .simon-pad.lit {
+        filter: brightness(1.5) drop-shadow(0 0 15px currentColor);
+        transform: translateZ(5px);
+      }
+
+      /* Tumbler/Wheel 3D */
+      .tumbler-scene {
+        perspective: 1000px;
+      }
+      .tumbler {
         position: relative;
         transform-style: preserve-3d;
-        width: 100%;
-        height: 100%;
+        transition: transform 0.1s; /* Smooth update from JS */
       }
-      .cube-face {
+      .tumbler-face {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -56,8 +114,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        border: 4px solid black;
+        border: 2px solid rgba(255,255,255,0.1);
       }
     </style>
   <script type="importmap">
@@ -67,7 +124,8 @@
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.4.1"
+    "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
+    "@google/genai": "https://esm.run/@google/genai"
   }
 }
 </script>
